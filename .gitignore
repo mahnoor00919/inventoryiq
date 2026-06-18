@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.env
+.env.local
+
+dist/
+build/
+
+*.log
+
+.vscode/
+
+prisma/dev.db
+prisma/dev.db-journal

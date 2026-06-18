@@ -1,0 +1,101 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// NOTE: SQLite does not support enums.
+// Role values:        "ADMIN" | "MANAGER" | "USER"
+// OrderStatus values: "PENDING" | "APPROVED" | "REJECTED" | "FULFILLED"
+// LogAction values:   "USER_CREATED" | "USER_UPDATED" | "USER_DEACTIVATED" |
+//                     "USER_ACTIVATED" | "PRODUCT_CREATED" | "PRODUCT_UPDATED" |
+//                     "PRODUCT_DELETED" | "STOCK_INCREASED" | "STOCK_DECREASED" |
+//                     "ORDER_CREATED" | "ORDER_APPROVED" | "ORDER_REJECTED" |
+//                     "ORDER_FULFILLED" | "LOGIN" | "LOGOUT"
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("USER")      // "ADMIN" | "MANAGER" | "USER"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+  logs   ActivityLog[]
+
+  @@map("users")
+}
+
+model Product {
+  id                String   @id @default(cuid())
+  name              String
+  sku               String   @unique
+  description       String?
+  price             Float
+  quantity          Int      @default(0)
+  lowStockThreshold Int      @default(10)
+  category          String
+  supplier          String?
+  supplierEmail     String?
+  supplierPhone     String?
+  imageUrl          String?
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  orders       Order[]
+  stockHistory StockHistory[]
+
+  @@map("products")
+}
+
+model StockHistory {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  change      Int      // positive = increase, negative = decrease
+  reason      String?
+  previousQty Int
+  newQty      Int
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+
+  @@map("stock_history")
+}
+
+model Order {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  productId  String
+  product    Product   @relation(fields: [productId], references: [id])
+  quantity   Int
+  status     String    @default("PENDING")  // "PENDING" | "APPROVED" | "REJECTED" | "FULFILLED"
+  notes      String?
+  reviewedBy String?
+  reviewedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@map("orders")
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  action     String   // see LogAction values in comment at top
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  targetId   String?
+  targetType String?
+  meta       String?  // JSON string
+  createdAt  DateTime @default(now())
+
+  @@map("activity_logs")
+}
