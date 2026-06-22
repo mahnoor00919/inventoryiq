@@ -1,4 +1,5 @@
 // app/api/auth/logout/route.ts
+export const dynamic = "force-dynamic";
 import { clearSessionCookie, getSession } from "@/lib/auth";
 import { createLog } from "@/lib/logger";
 import { successResponse } from "@/lib/api-response";
