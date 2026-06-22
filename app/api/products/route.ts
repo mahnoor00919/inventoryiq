@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get("category") || "";
     const lowStock = searchParams.get("lowStock") === "true";
 
-    const where = {
+    const baseWhere = {
       isActive: true,
       ...(search && {
         OR: [
@@ -46,37 +46,25 @@ export async function GET(request: NextRequest) {
         ],
       }),
       ...(category && { category }),
-      ...(lowStock && {
-        quantity: { lte: prisma.product.fields.lowStockThreshold },
-      }),
     };
 
-    // For low stock, use raw comparison
-    const products = await prisma.product.findMany({
-      where: lowStock
-        ? {
-            isActive: true,
-            ...(search && {
-              OR: [
-                { name: { contains: search } },
-                { sku: { contains: search } },
-              ],
-            }),
-          }
-        : where,
+    const allProducts = await prisma.product.findMany({
+      where: baseWhere,
       orderBy: { createdAt: "desc" },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
     });
 
     const filteredProducts = lowStock
-      ? products.filter((p) => p.quantity <= p.lowStockThreshold)
-      : products;
+      ? allProducts.filter((p) => p.quantity <= p.lowStockThreshold)
+      : allProducts;
 
-    const total = await prisma.product.count({ where });
+    const total = filteredProducts.length;
+    const pagedProducts = filteredProducts.slice(
+      (page - 1) * pageSize,
+      page * pageSize
+    );
 
     return successResponse({
-      data: filteredProducts,
+      data: pagedProducts,
       total,
       page,
       pageSize,
