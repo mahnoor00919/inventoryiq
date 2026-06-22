@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Package, TrendingUp, ShoppingCart,
-  Users, ClipboardList, LogOut, ChevronDown, Boxes
+  Users, ClipboardList, LogOut, ChevronDown, Boxes, Lightbulb
 } from "lucide-react";
 import { cn, getInitials } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth.store";
@@ -22,6 +22,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ["ADMIN", "MANAGER", "USER"] },
+  { href: "/ai", label: "AI Assistant", icon: Lightbulb, roles: ["ADMIN", "MANAGER", "USER"] },
   { href: "/manager/products", label: "Products", icon: Package, roles: ["ADMIN", "MANAGER"] },
   { href: "/manager/stock", label: "Stock Control", icon: TrendingUp, roles: ["ADMIN", "MANAGER"] },
   { href: "/user/catalog", label: "Product Catalog", icon: Boxes, roles: ["USER"] },

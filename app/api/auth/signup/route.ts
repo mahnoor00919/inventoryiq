@@ -6,6 +6,7 @@ import { signToken, setSessionCookie } from "@/lib/auth";
 import { createLog } from "@/lib/logger";
 import { successResponse, errorResponse, serverErrorResponse } from "@/lib/api-response";
 import { z } from "zod";
+import type { Role } from "@/types";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -39,11 +40,13 @@ export async function POST(request: NextRequest) {
       data: { name, email, password: hashedPassword, role: "USER" },
     });
 
+    const userRole = user.role as Role;
+
     const token = await signToken({
       sub: user.id,
       email: user.email,
       name: user.name,
-      role: user.role,
+      role: userRole,
     });
 
     setSessionCookie(token);
@@ -57,7 +60,7 @@ export async function POST(request: NextRequest) {
     });
 
     return successResponse(
-      { id: user.id, name: user.name, email: user.email, role: user.role },
+      { id: user.id, name: user.name, email: user.email, role: userRole },
       "Account created successfully",
       201
     );

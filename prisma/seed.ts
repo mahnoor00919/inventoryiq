@@ -85,7 +85,7 @@ async function main() {
   }
 
   // Create orders
-  const orderStatuses = [OrderStatus.PENDING, OrderStatus.APPROVED, OrderStatus.REJECTED, OrderStatus.FULFILLED];
+  const orderStatuses = ["PENDING", "APPROVED", "REJECTED", "FULFILLED"] as const;
   for (let i = 0; i < 8; i++) {
     const product = createdProducts[i % createdProducts.length];
     const status = orderStatuses[i % orderStatuses.length];
@@ -96,22 +96,22 @@ async function main() {
         quantity: Math.floor(Math.random() * 5) + 1,
         status,
         notes: `Request #${i + 1} for ${product.name}`,
-        reviewedBy: status !== OrderStatus.PENDING ? admin.id : null,
-        reviewedAt: status !== OrderStatus.PENDING ? new Date() : null,
+        reviewedBy: status !== "PENDING" ? admin.id : null,
+        reviewedAt: status !== "PENDING" ? new Date() : null,
       },
     });
   }
 
   // Create activity logs
   const logActions = [
-    { action: LogAction.PRODUCT_CREATED, userId: admin.id, targetType: "product", meta: JSON.stringify({ name: "MacBook Pro" }) },
-    { action: LogAction.STOCK_INCREASED, userId: manager.id, targetType: "product", meta: JSON.stringify({ amount: 20 }) },
-    { action: LogAction.ORDER_APPROVED, userId: admin.id, targetType: "order", meta: JSON.stringify({ orderId: "ord_1" }) },
-    { action: LogAction.USER_CREATED, userId: admin.id, targetType: "user", meta: JSON.stringify({ email: "newuser@test.com" }) },
-    { action: LogAction.PRODUCT_UPDATED, userId: manager.id, targetType: "product", meta: JSON.stringify({ field: "price" }) },
-    { action: LogAction.STOCK_DECREASED, userId: manager.id, targetType: "product", meta: JSON.stringify({ amount: 5 }) },
-    { action: LogAction.ORDER_REJECTED, userId: admin.id, targetType: "order", meta: JSON.stringify({ reason: "Out of budget" }) },
-    { action: LogAction.LOGIN, userId: user1.id, targetType: "user" },
+    { action: "PRODUCT_CREATED", userId: admin.id, targetType: "product", meta: JSON.stringify({ name: "MacBook Pro" }) },
+    { action: "STOCK_INCREASED", userId: manager.id, targetType: "product", meta: JSON.stringify({ amount: 20 }) },
+    { action: "ORDER_APPROVED", userId: admin.id, targetType: "order", meta: JSON.stringify({ orderId: "ord_1" }) },
+    { action: "USER_CREATED", userId: admin.id, targetType: "user", meta: JSON.stringify({ email: "newuser@test.com" }) },
+    { action: "PRODUCT_UPDATED", userId: manager.id, targetType: "product", meta: JSON.stringify({ field: "price" }) },
+    { action: "STOCK_DECREASED", userId: manager.id, targetType: "product", meta: JSON.stringify({ amount: 5 }) },
+    { action: "ORDER_REJECTED", userId: admin.id, targetType: "order", meta: JSON.stringify({ reason: "Out of budget" }) },
+    { action: "LOGIN", userId: user1.id, targetType: "user" },
   ];
 
   for (const log of logActions) {

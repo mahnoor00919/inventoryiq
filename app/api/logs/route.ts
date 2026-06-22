@@ -1,5 +1,6 @@
 // app/api/logs/route.ts
 import { NextRequest } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import {
   successResponse, unauthorizedResponse, forbiddenResponse, serverErrorResponse
@@ -19,20 +20,19 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const pageSize = parseInt(searchParams.get("pageSize") || "20");
 
-    const where = {
-      ...(action && { action: action as Parameters<typeof prisma.activityLog.findMany>[0]["where"] extends { action?: infer A } ? A : never }),
-      ...(targetType && { targetType }),
-    };
+    const where: Prisma.ActivityLogWhereInput = {};
+    if (action) where.action = action;
+    if (targetType) where.targetType = targetType;
 
     const [logs, total] = await Promise.all([
       prisma.activityLog.findMany({
-        where: targetType || action ? { targetType: targetType || undefined, action: action as "LOGIN" | undefined } : {},
+        where,
         include: { user: { select: { name: true, email: true, role: true } } },
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * pageSize,
         take: pageSize,
       }),
-      prisma.activityLog.count({ where: {} }),
+      prisma.activityLog.count({ where }),
     ]);
 
     return successResponse({

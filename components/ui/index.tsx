@@ -184,17 +184,67 @@ interface ModalProps {
   size?: "sm" | "md" | "lg";
 }
 
-export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalProps) {
+// export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalProps) {
+//   if (!isOpen) return null;
+
+//   const sizes = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" };
+
+//   return (
+//     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+//       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+//       <div className={cn("relative w-full bg-gray-900 border border-gray-800 rounded-xl shadow-2xl", sizes[size])}>
+//         <div className="flex items-center justify-between p-5 border-b border-gray-800">
+//           <h2 className="text-base font-semibold text-gray-100">{title}</h2>
+//           <button
+//             onClick={onClose}
+//             className="p-1 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-gray-800 transition-colors"
+//           >
+//             ✕
+//           </button>
+//         </div>
+//         <div className="p-5">{children}</div>
+//       </div>
+//     </div>
+//   );
+// }
+export function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  size = "md",
+}: ModalProps) {
   if (!isOpen) return null;
 
-  const sizes = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" };
+  const sizes = {
+    sm: "max-w-sm",
+    md: "max-w-lg",
+    lg: "max-w-2xl",
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className={cn("relative w-full bg-gray-900 border border-gray-800 rounded-xl shadow-2xl", sizes[size])}>
+      
+      {/* BACKDROP */}
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* MODAL BOX */}
+      <div
+        className={cn(
+          "relative w-full bg-gray-900 border border-gray-800 rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden",
+          sizes[size]
+        )}
+      >
+        
+        {/* HEADER */}
         <div className="flex items-center justify-between p-5 border-b border-gray-800">
-          <h2 className="text-base font-semibold text-gray-100">{title}</h2>
+          <h2 className="text-base font-semibold text-gray-100">
+            {title}
+          </h2>
+
           <button
             onClick={onClose}
             className="p-1 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-gray-800 transition-colors"
@@ -202,7 +252,12 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalPr
             ✕
           </button>
         </div>
-        <div className="p-5">{children}</div>
+
+        {/* BODY (IMPORTANT FIX) */}
+        <div className="flex-1 overflow-y-auto p-5">
+          {children}
+        </div>
+
       </div>
     </div>
   );
