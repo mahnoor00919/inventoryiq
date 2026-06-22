@@ -1,5 +1,6 @@
 
 // app/api/ai/route.ts
+export const dynamic = "force-dynamic";
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { unauthorizedResponse, serverErrorResponse } from "@/lib/api-response";
