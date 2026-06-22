@@ -1,4 +1,5 @@
 // app/api/auth/session/route.ts
+export const dynamic = "force-dynamic";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { successResponse, unauthorizedResponse, serverErrorResponse } from "@/lib/api-response";
