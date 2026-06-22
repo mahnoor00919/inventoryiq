@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 // app/api/users/route.ts
 import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
