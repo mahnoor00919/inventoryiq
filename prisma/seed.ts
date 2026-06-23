@@ -1,4 +1,5 @@
 // prisma/seed.ts
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 
 import bcrypt from "bcryptjs";
