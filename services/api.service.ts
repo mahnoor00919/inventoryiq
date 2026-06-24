@@ -1,7 +1,7 @@
 // services/api.service.ts
 import type { ApiResponse } from "@/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "";
+const BASE_URL = ""; // force same-origin API calls
 
 class ApiService {
   private async request<T>(
@@ -13,6 +13,7 @@ class ApiService {
         "Content-Type": "application/json",
         ...options.headers,
       },
+      credentials: "include",
       ...options,
     });
 
